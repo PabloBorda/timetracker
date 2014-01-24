@@ -1,0 +1,92 @@
+
+   <%= stylesheet_link_tag "style.css" %>
+
+   <%= javascript_include_tag "jquery.min.js" %>
+   <%= javascript_include_tag "jquery.timer.js" %>
+   <%= javascript_include_tag "timetracker.js" %>
+
+   <% @user = User.find_by_name(session[:user].to_s) %>
+ 
+   <script type="text/javascript">
+     window.begin = new Date().getTime();
+    
+    function server_reset_timer(){
+      $.get('/tracker/reset').done(function(myout){
+      });
+ 
+    }
+
+
+    function my_tasks(){
+      $.get('/tracker/my_tasks').done(function(myout){
+        alert(myout);
+      });
+    } 
+
+
+    function all_tasks(){
+      $.get('/tracker/all_tasks').done(function(myout){
+        alert(myout);
+      });
+
+
+    }
+
+
+     function track(){
+       var description = $("#description").val();
+       $.get("/tracker/track",{begin: window.begin,duration: $("#stopwatch").html().toString(),description: $("textarea[name='description']").val(),uid: <%= @user.id.to_s %>}).done(function(){
+  alert("Gracias.. asi me gusta.. pedazo de chicharron de hemorroides");
+  $("textarea[name='description']").val("");
+  $("#resetbtn").trigger("click");
+});
+               
+     }   
+   
+   </script>
+   
+   
+<div style="float: right;" align="center">
+<a href="/tracker/logout">
+  <img src="/tracker/images/exit.png" alt="Log out" />Log Out</a>
+</div>
+<div style="float: left" align="left">
+  
+  <img src="/tracker/images/pic01.png" width="300" height="130" />
+  <h5> SmartBandS Time Tracking - Dashboard </h5>
+  <div style="float: left;">
+    <% @user = User.find_by_name(session[:user].to_s) %>
+    <img src="<%= @user.url %>" style="max-width: 200px;max-height: 300px;"/>
+      <br />
+      <p>
+	<%=@user.name %>
+      </p>
+      <p><a href="/tracker/my_tasks">View All My Tasks</a></p>
+      <p><a href="/tracker/all_tasks">View All People Tasks</a></p>
+	  
+	    </a>	
+            <br />
+	<div align="left" style="float: left;">
+	  <a href="/tracker/logout"><img src="/tracker/images/exit.png" alt="Log out" />Log Out</a>
+	</div>			 
+			    
+  </div>
+</div>
+			
+      <div id="mydash">
+      <div id="watch">
+        <span id="stopwatch">
+        </span>
+        <div id="controls" align="center">
+        <table align="center"><tr><td><input id="startbtn" type="button" value="Play/Pause" onclick="Example1.Timer.toggle();"></td>
+	  <td><input id="resetbtn" type="button" value="Stop/Reset" onclick="Example1.resetStopwatch();server_reset_timer();"></td></tr>
+	  </table>
+        </div>
+      </div>
+      </div><br/>
+      <div id="doing" style="font-size: 20px" align="center">                  
+          Que carajo estas haciendo? <br/>
+          <textarea rows="5" cols="80" name="description"></textarea>          
+          <input type="button" value="Track!" onclick="track();"/>
+          
+      </div>
